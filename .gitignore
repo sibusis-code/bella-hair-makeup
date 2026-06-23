@@ -1,0 +1,19 @@
+# Secrets — never commit real credentials (use .env.example as the template)
+.env
+
+# Database backups / runtime markers — local only
+db/backups/
+*.marker
+.runtime/*.marker
+
+# One-off / temporary inspection & migration runners
+_*.php
+
+# Deploy / dependency tooling
+.vercel/
+node_modules/
+vendor/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db

@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Disallow: /db/
+Disallow: /docs/
+Disallow: /admin-login.php
+Disallow: /admin-dashboard.php
+Disallow: /admin-booking-detail.php
+Disallow: /admin-booking-edit.php
+Disallow: /admin-booking-cancel.php
+Disallow: /admin-booking-reschedule.php
+Disallow: /admin-block-slots.php
+Disallow: /admin-users.php
+Disallow: /admin-settings.php
+Disallow: /admin-change-password.php
+Disallow: /admin-logs.php
+Disallow: /admin-export-csv.php
+Disallow: /booking.php
+Disallow: /itn.php
+Disallow: /success.php
+Disallow: /cancel.php
+
+Sitemap: https://bellahairandmakeup.co.za/sitemap.xml

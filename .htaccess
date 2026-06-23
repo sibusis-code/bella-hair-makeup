@@ -1,0 +1,56 @@
+# Bella Hair & Makeup - Safe xneelo .htaccess
+
+Options -Indexes
+
+# Custom error page
+ErrorDocument 404 /404.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Block common sensitive paths
+    RewriteRule (^|/)\.git - [F,L,NC]
+    RewriteRule (^|/)\.env - [F,L,NC]
+    RewriteRule (^|/)\.vscode - [F,L,NC]
+    RewriteRule (^|/)node_modules - [F,L,NC]
+    RewriteRule (^|/)vendor/composer - [F,L,NC]
+
+    # Block the db/ folder entirely (PII JSON backups + SQL migrations) and internal docs.
+    RewriteRule (^|/)db/ - [F,L,NC]
+    RewriteRule (^|/)docs/ - [F,L,NC]
+    # Block the runtime marker directory (internal state).
+    RewriteRule (^|/)\.runtime - [F,L,NC]
+</IfModule>
+
+# Block sensitive file extensions. (.txt is intentionally NOT blocked so robots.txt stays public.)
+<FilesMatch "\.(env|ini|log|sql|bak|md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # HSTS — HTTPS is already forced above. 1 year, include subdomains.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    # Content-Security-Policy. 'unsafe-inline' is required because the templates use
+    # inline <style>/<script> (incl. the PayFast auto-submit and GA4 snippet); the
+    # external allow-lists for script/connect/font + form-action + frame-ancestors
+    # still block injected external scripts and payment-form hijacking. A future
+    # hardening step is to move inline blocks to nonces and drop 'unsafe-inline'.
+    Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://maps.googleapis.com https://maps.gstatic.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://maps.googleapis.com; form-action 'self' https://www.payfast.co.za https://sandbox.payfast.co.za; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json
+</IfModule>
