@@ -676,7 +676,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'You must agree to the booking policy and deposit terms.';
     }
 
-    if ($formData['paymentMethod'] === 'online_deposit') {
+    // Demo mode hands off to WhatsApp (no PayFast), so skip the gateway config check.
+    if (!$demoMode && $formData['paymentMethod'] === 'online_deposit') {
       $paymentConfigIssues = getPaymentConfigIssues();
       if ($paymentConfigIssues) {
         $errors = array_merge($errors, $paymentConfigIssues);
