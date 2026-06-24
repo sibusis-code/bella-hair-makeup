@@ -114,8 +114,9 @@ define('PAYFAST_SANDBOX', envToBool('PAYFAST_SANDBOX', true));
 // Optional: set your PayFast passphrase if configured in PayFast dashboard.
 define('PAYFAST_PASSPHRASE', envOrDefault('PAYFAST_PASSPHRASE', ''));
 
-// Optional override. Leave blank to auto-detect host and subfolder path.
-define('SITE_URL', envOrDefault('SITE_URL', 'https://bellahairandmakeup.co.za'));
+// Optional override. Leave blank to auto-detect host and subfolder path
+// (so canonical/og/PayFast URLs match whatever domain the app is served from).
+define('SITE_URL', envOrDefault('SITE_URL', ''));
 
 // Optional explicit notify URL for ITN (use a public HTTPS URL).
 define('PAYFAST_NOTIFY_URL_OVERRIDE', envOrDefault('PAYFAST_NOTIFY_URL_OVERRIDE', 'https://bellahairandmakeup.co.za/itn.php'));
