@@ -56,12 +56,14 @@ if ($from->diff($to)->days > 62) {
 }
 
 $mysqli = tryGetDbConnection();
-if (!($mysqli instanceof mysqli)) {
-    availabilityFail(503, 'Service temporarily unavailable.');
+if ($mysqli instanceof mysqli) {
+    $result = computeAvailability($mysqli, $service, $location, $dateFrom, $dateTo);
+    $mysqli->close();
+} else {
+    // DEMO MODE: no database (e.g. Vercel serverless). Serve availability from the
+    // in-memory default catalog so the calendar still works with dummy data.
+    $result = computeAvailabilityDemo($service, $location, $dateFrom, $dateTo);
 }
-
-$result = computeAvailability($mysqli, $service, $location, $dateFrom, $dateTo);
-$mysqli->close();
 
 if (isset($result['error'])) {
     $map = [

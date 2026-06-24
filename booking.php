@@ -180,10 +180,165 @@ if ($mysqli instanceof mysqli) {
   $paidStmt->close();
 }
 
+/**
+ * Render the demo booking confirmation screen + a pre-filled WhatsApp deep link.
+ * Used when there is no database (demo mode): no payment is taken; the client is
+ * handed off to WhatsApp to confirm with the studio.
+ */
+function renderDemoBookingConfirmation(array $formData, array $servicesConfig, array $timeSlotMap, array $locationsConfig, array $stylistsConfig, string $whatsappUrl): void
+{
+    $waDigits = preg_replace('/\D/', '', $whatsappUrl);
+    if ($waDigits === '') {
+        $waDigits = '27712345678';
+    }
+
+    $fullName = trim((string)$formData['firstName'] . ' ' . (string)$formData['lastName']);
+    $phone = (string)$formData['phone'];
+    $email = (string)$formData['email'];
+    $notes = trim((string)$formData['notes']);
+
+    $rows = [];      // display rows: [service, dateLong, time24, location, stylist]
+    $waItems = [];   // "Service on 15 June at 14:00 (Location)"
+    foreach ($formData['bookings'] as $slot) {
+        $svcKey = (string)($slot['service'] ?? '');
+        $svcLabel = (string)($servicesConfig[$svcKey]['label'] ?? $svcKey);
+        $locKey = (string)($slot['location'] ?? '');
+        $locLabel = (string)($locationsConfig[$locKey] ?? $locKey);
+        $stylistKey = (string)($slot['stylist'] ?? '');
+        $stylistLabel = (string)($stylistsConfig[$stylistKey] ?? $stylistKey);
+
+        $dateRaw = (string)($slot['preferredDate'] ?? '');
+        $dateObj = DateTimeImmutable::createFromFormat('!Y-m-d', $dateRaw);
+        $dateLong = $dateObj ? $dateObj->format('l, j F Y') : $dateRaw;  // Monday, 15 June 2026
+        $dateShort = $dateObj ? $dateObj->format('j F') : $dateRaw;      // 15 June
+
+        $timeKey = (string)($slot['preferredTime'] ?? '');
+        $time24 = preg_match('/^\d{2}:\d{2}$/', $timeKey)
+            ? $timeKey
+            : (string)($timeSlotMap[$timeKey]['label'] ?? $timeKey);
+
+        $rows[] = [$svcLabel, $dateLong, $time24, $locLabel, $stylistLabel];
+        $waItems[] = $svcLabel . ' on ' . $dateShort . ' at ' . $time24 . ' (' . $locLabel . ')';
+    }
+
+    if (count($waItems) === 1) {
+        $message = 'Hello, I would like to book ' . $waItems[0] . '.';
+    } else {
+        $numbered = [];
+        foreach ($waItems as $i => $item) {
+            $numbered[] = ($i + 1) . '. ' . $item;
+        }
+        $message = "Hello, I would like to make the following bookings:\n" . implode("\n", $numbered);
+    }
+    $message .= "\n\nName: " . $fullName . "\nPhone: " . $phone;
+    if ($email !== '') {
+        $message .= "\nEmail: " . $email;
+    }
+    if ($notes !== '') {
+        $message .= "\nNotes: " . $notes;
+    }
+
+    $waLink = 'https://wa.me/' . $waDigits . '?text=' . rawurlencode($message);
+    $esc = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+
+    http_response_code(200);
+    header('Content-Type: text/html; charset=utf-8');
+    ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Booking Request Ready — Bella Hair &amp; Makeup</title>
+  <link rel="icon" href="images/logo.jpeg" type="image/jpeg" />
+  <style>
+    :root { --gold:#C9A96E; --ink:#1a1a1a; --paper:#faf7f2; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+           background:var(--paper); color:var(--ink); line-height:1.55; }
+    .wrap { max-width:640px; margin:0 auto; padding:40px 20px 60px; }
+    .card { background:#fff; border:1px solid #ece6db; border-radius:16px; padding:32px;
+            box-shadow:0 10px 40px rgba(0,0,0,.06); }
+    .logo { display:block; width:72px; height:72px; object-fit:cover; border-radius:50%;
+            margin:0 auto 14px; border:2px solid var(--gold); }
+    .tick { width:54px; height:54px; border-radius:50%; background:#e8f7ee; color:#1a9e54;
+            display:flex; align-items:center; justify-content:center; font-size:30px;
+            margin:0 auto 12px; }
+    h1 { text-align:center; font-size:1.5rem; margin:.2rem 0 .3rem; }
+    .sub { text-align:center; color:#6b6b6b; margin:0 0 22px; font-size:.95rem; }
+    .demo-note { background:#fff8e8; border:1px solid #f0e2b8; color:#8a6d1f;
+                 border-radius:10px; padding:10px 14px; font-size:.85rem; text-align:center; margin-bottom:22px; }
+    table { width:100%; border-collapse:collapse; margin:0 0 10px; }
+    td { padding:9px 4px; border-bottom:1px solid #f0ece4; vertical-align:top; font-size:.95rem; }
+    td.k { color:#8a8a8a; width:34%; }
+    td.v { font-weight:600; }
+    .bk { border:1px solid #ece6db; border-radius:12px; padding:8px 14px; margin:0 0 12px; }
+    .bk h3 { margin:8px 0; font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); }
+    .wa { display:flex; align-items:center; justify-content:center; gap:10px;
+          background:#25D366; color:#fff; text-decoration:none; font-weight:700;
+          padding:16px 20px; border-radius:12px; font-size:1.05rem; margin:18px 0 8px;
+          box-shadow:0 8px 24px rgba(37,211,102,.35); }
+    .wa:hover { background:#1ebe5b; }
+    .links { text-align:center; margin-top:18px; font-size:.9rem; }
+    .links a { color:var(--ink); }
+    .preview { background:#f7f4ee; border:1px dashed #d9cfbb; border-radius:10px;
+               padding:12px 14px; font-size:.82rem; white-space:pre-wrap; color:#555; margin-top:14px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <img class="logo" src="images/logo.jpeg" alt="Bella Hair &amp; Makeup" />
+      <div class="tick">&#10003;</div>
+      <h1>Your booking request is ready!</h1>
+      <p class="sub">Thanks, <?php echo $esc($formData['firstName']); ?> — tap the button below to send it to us on WhatsApp and we’ll confirm your slot.</p>
+      <div class="demo-note">Demo mode — no payment is taken. This sends a pre-filled message to our demo WhatsApp number.</div>
+
+      <table>
+        <tr><td class="k">Name</td><td class="v"><?php echo $esc($fullName); ?></td></tr>
+        <tr><td class="k">Phone</td><td class="v"><?php echo $esc($phone); ?></td></tr>
+        <?php if ($email !== ''): ?><tr><td class="k">Email</td><td class="v"><?php echo $esc($email); ?></td></tr><?php endif; ?>
+      </table>
+
+      <?php foreach ($rows as $i => $r): ?>
+        <div class="bk">
+          <h3><?php echo (count($rows) > 1 ? 'Booking ' . ($i + 1) : 'Your booking'); ?></h3>
+          <table>
+            <tr><td class="k">Service</td><td class="v"><?php echo $esc($r[0]); ?></td></tr>
+            <tr><td class="k">Date</td><td class="v"><?php echo $esc($r[1]); ?></td></tr>
+            <tr><td class="k">Time</td><td class="v"><?php echo $esc($r[2]); ?></td></tr>
+            <tr><td class="k">Location</td><td class="v"><?php echo $esc($r[3]); ?></td></tr>
+            <tr><td class="k">Stylist</td><td class="v"><?php echo $esc($r[4]); ?></td></tr>
+          </table>
+        </div>
+      <?php endforeach; ?>
+
+      <?php if ($notes !== ''): ?>
+        <table><tr><td class="k">Notes</td><td class="v"><?php echo $esc($notes); ?></td></tr></table>
+      <?php endif; ?>
+
+      <a class="wa" href="<?php echo $esc($waLink); ?>" target="_blank" rel="noopener">
+        <span>&#128241;</span> Send booking on WhatsApp
+      </a>
+
+      <div class="preview"><?php echo $esc($message); ?></div>
+
+      <div class="links">
+        <a href="book.php">&larr; Make another booking</a> &nbsp;·&nbsp; <a href="index.php">Home</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+    <?php
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (!($mysqli instanceof mysqli)) {
-    $errors[] = 'Booking submissions are temporarily unavailable while our database is offline. Please try again shortly.';
-  }
+  // DEMO MODE: with no database (e.g. the Vercel serverless demo) we still run the
+  // full input validation below, then hand the booking off to WhatsApp on the
+  // confirmation screen instead of writing to the DB / redirecting to PayFast.
+  $demoMode = !($mysqli instanceof mysqli);
 
   if (($mysqli instanceof mysqli) && !ensureSalonBookingsSchema($mysqli)) {
     $errors[] = 'Booking storage is not ready. Please try again.';
@@ -528,7 +683,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
     }
 
-    if (!$errors) {
+    if (!$errors && ($mysqli instanceof mysqli)) {
         // Final availability re-check through the shared engine: per-service capacity,
         // Braids two-on-one (helper auto-assigned), live 5-min holds, and admin blocks.
         $resolvedSlots = [];   // index => ['lead' => ?, 'helper' => ?]
@@ -597,6 +752,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $errors[] = 'There was a problem reading your additional services. Please try again.';
         }
+    }
+
+    if (!$errors && $demoMode) {
+        // No database: this is a demo booking. Skip PayFast/DB entirely and show a
+        // confirmation screen with a pre-filled WhatsApp message to the demo number.
+        renderDemoBookingConfirmation($formData, $servicesConfig, $timeSlotMap, $locationsConfig, $stylistsConfig, $businessWhatsappUrl);
+        exit;
     }
 
     if (!$errors) {

@@ -2128,6 +2128,145 @@ function computeAvailability(mysqli $mysqli, string $serviceKey, string $locatio
 }
 
 /**
+ * DEMO availability — same output shape as computeAvailability(), but computed
+ * entirely from the in-memory default catalog with NO database. Used when the DB
+ * is offline (e.g. the Vercel serverless demo) so the calendar still works.
+ * There are no real bookings/holds/blocks, so every slot is open except past
+ * dates, elapsed times today, and days the location is closed.
+ */
+function computeAvailabilityDemo(string $serviceKey, string $locationKey, string $dateFrom, string $dateTo): array
+{
+    $catalog = getDefaultBookingCatalog();
+    $services = $catalog['services'] ?? [];
+    $locations = $catalog['locations'] ?? [];
+    if (!isset($services[$serviceKey])) {
+        return ['error' => 'unknown_service'];
+    }
+    if (!isset($locations[$locationKey])) {
+        return ['error' => 'unknown_location'];
+    }
+
+    $timeSlotMap = $catalog['timeSlotMap'] ?? [];
+    $capacity = availabilityServiceCapacity($catalog, $serviceKey);
+    $twoOnOne = availabilityIsTwoOnOne($serviceKey);
+    $eligible = availabilityEligibleStylists($catalog, $serviceKey, $locationKey);
+
+    // Prefer the service's configured slot keys; fall back to the standard schedule.
+    $svcSlotKeys = array_values(array_filter(
+        $services[$serviceKey]['slot_keys'] ?? [],
+        static fn($k) => isset($timeSlotMap[$k])
+    ));
+    $weekdayKeys = $svcSlotKeys ?: availabilityDefaultSlotKeys($timeSlotMap, 'weekday');
+    $sunDefault = availabilityDefaultSlotKeys($timeSlotMap, 'sun');
+    $sunKeys = $svcSlotKeys
+        ? array_values(array_filter($svcSlotKeys, static fn($k) => in_array($k, $sunDefault, true)))
+        : $sunDefault;
+    if (empty($sunKeys)) {
+        $sunKeys = $sunDefault;
+    }
+    $slotKeysByGroup = ['weekday' => $weekdayKeys, 'sun' => $sunKeys];
+
+    $tz = new DateTimeZone(APP_TIMEZONE);
+    $today = new DateTimeImmutable('today', $tz);
+    $bufferedNow = (new DateTimeImmutable('now', $tz))->modify('+1 hour');
+    $cursor = DateTimeImmutable::createFromFormat('Y-m-d', $dateFrom, $tz);
+    $end = DateTimeImmutable::createFromFormat('Y-m-d', $dateTo, $tz);
+    if ($cursor === false || $end === false) {
+        return ['error' => 'bad_date_range'];
+    }
+    $cursor = $cursor->setTime(0, 0, 0);
+    $end = $end->setTime(0, 0, 0);
+
+    $days = [];
+    $guard = 0;
+    while ($cursor <= $end && $guard < 100) {
+        $guard++;
+        $dateStr = $cursor->format('Y-m-d');
+        $dow = (int)$cursor->format('w');
+        $slotKeys = $slotKeysByGroup[($dow === 0) ? 'sun' : 'weekday'] ?? [];
+        $dayEntry = ['date' => $dateStr, 'weekday' => strtolower($cursor->format('D')), 'state' => 'open', 'slots' => []];
+
+        if ($cursor < $today) {
+            $dayEntry['state'] = 'past';
+            $days[] = $dayEntry;
+            $cursor = $cursor->modify('+1 day');
+            continue;
+        }
+        if (!availabilityLocationOpen($locationKey, $dateStr) || empty($slotKeys)) {
+            $dayEntry['state'] = 'closed';
+            $days[] = $dayEntry;
+            $cursor = $cursor->modify('+1 day');
+            continue;
+        }
+
+        $openCount = 0;
+        $hasFutureSlot = false;
+        foreach ($slotKeys as $slotKey) {
+            $dbTime = (string)($timeSlotMap[$slotKey]['db'] ?? '');
+            if ($dbTime === '') {
+                continue;
+            }
+            $pastTime = false;
+            if ($dateStr === $today->format('Y-m-d')) {
+                $slotDt = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $dateStr . ' ' . $dbTime, $tz);
+                if ($slotDt !== false && $slotDt <= $bufferedNow) {
+                    $pastTime = true;
+                }
+            }
+            $stylistList = [];
+            foreach ($eligible as $key => $name) {
+                $stylistList[] = ['key' => $key, 'name' => $name, 'free' => true];
+            }
+            $needed = $twoOnOne ? 2 : 1;
+            $open = !$pastTime && count($stylistList) >= $needed;
+            if ($open) {
+                $openCount++;
+            }
+            if (!$pastTime) {
+                $hasFutureSlot = true;
+            }
+            $dayEntry['slots'][] = [
+                'time' => $slotKey,
+                'db_time' => $dbTime,
+                'label' => (string)($timeSlotMap[$slotKey]['label'] ?? $slotKey),
+                'open' => $open,
+                'clients_booked' => 0,
+                'capacity' => $capacity,
+                'surcharge' => availabilitySlotSurcharge($slotKey),
+                'blocked' => false,
+                'stylists' => $stylistList,
+            ];
+        }
+
+        $totalSlots = count($dayEntry['slots']);
+        if ($totalSlots === 0) {
+            $dayEntry['state'] = 'closed';
+        } elseif ($openCount === 0) {
+            $dayEntry['state'] = (!$hasFutureSlot && $dateStr === $today->format('Y-m-d')) ? 'past' : 'full';
+        } elseif ($openCount <= (int)ceil($totalSlots / 3)) {
+            $dayEntry['state'] = 'nearly_full';
+        } else {
+            $dayEntry['state'] = 'open';
+        }
+
+        $days[] = $dayEntry;
+        $cursor = $cursor->modify('+1 day');
+    }
+
+    return [
+        'service' => $serviceKey,
+        'service_label' => (string)($services[$serviceKey]['label'] ?? $serviceKey),
+        'location' => $locationKey,
+        'capacity' => $capacity,
+        'model' => $twoOnOne ? 'two-on-one' : 'capacity-n',
+        'deposit_percentage' => BOOKING_DEPOSIT_PERCENTAGE,
+        'addons' => [],
+        'days' => $days,
+        'demo' => true,
+    ];
+}
+
+/**
  * Final re-check that a single slot is bookable for a chosen lead stylist.
  * Used by booking.php (pre-pay) and itn.php (post-pay). Returns:
  *   ['ok' => bool, 'reason' => string, 'helper' => ?string]
