@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /db/
-Disallow: /docs/
 Disallow: /admin-login.php
 Disallow: /admin-dashboard.php
 Disallow: /admin-booking-detail.php

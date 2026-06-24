@@ -1,12 +1,12 @@
 -- ===========================================================================
--- Bella — Ingest the owner's real price list (pricing.md), 2026-06-19
+-- Bella — Ingest the demo price list (config.php), 2026-06-19
 -- Target: MariaDB 10.11 (bella_hair). Idempotent (IF NOT EXISTS / INSERT IGNORE /
 -- explicit UPDATEs). Apply with the matching code (config.php price matrix +
 -- resolver, book.php data-driven lengths, booking.php matrix pricing).
 --
 -- Moves pricing from a flat base_price to a (service, subtype, length) matrix in
 -- booking_service_prices. config.php getDefaultServicePriceMatrix() mirrors this
--- exactly as the code fallback — pricing.md is the source of truth for the numbers.
+-- exactly as the code fallback — config.php is the source of truth for the numbers.
 -- ===========================================================================
 
 -- 1) Price matrix table -----------------------------------------------------
@@ -203,7 +203,7 @@ INSERT IGNORE INTO booking_service_subtypes (service_id, subtype_key, subtype_la
     SELECT 'undo-cornrows','Undo Cornrows',30
   ) v WHERE s.service_key = 'undo';
 
--- 4) Price matrix rows (pricing.md). length_key '' = single flat price. ----------
+-- 4) Price matrix rows (config.php). length_key '' = single flat price. ----------
 REPLACE INTO booking_service_prices (service_key, subtype_key, length_key, length_label, price, sort_order) VALUES
   -- Braids
   ('braids','knotless-braids','bra-shoulder','Bra/Shoulder Length',650,10),
@@ -318,7 +318,7 @@ REPLACE INTO booking_service_prices (service_key, subtype_key, length_key, lengt
   ('undo','undo-braids-small','','',200,10),
   ('undo','undo-cornrows','','',50,10);
 
--- 5) Add-ons (Braids Extras from pricing.md). -------------------------------
+-- 5) Add-ons (Braids Extras from config.php). -------------------------------
 UPDATE booking_addons SET price = 200.00, label = 'Small (S) Size' WHERE addon_key = 'small';
 UPDATE booking_addons SET price = 100.00, label = 'Hairpiece Colour Blend' WHERE addon_key = 'colour-blend';
 UPDATE booking_addons SET price = 50.00,  label = 'Curling Ends' WHERE addon_key = 'curly-ends';

@@ -2,7 +2,7 @@
 -- Phase 0 — Blueprint alignment migration
 -- Target: MariaDB 10.11 (bella_hair)  |  Date: 2026-06-14
 -- Idempotent: safe to re-run (uses IF [NOT] EXISTS / INSERT IGNORE).
--- See: docs/BOOKING-BLUEPRINT.md and docs/BUILD-PHASE-0-1.md
+-- See: config.php (the availability + pricing engine).
 -- Rollback: db/migrations/2026-06-14_phase0_blueprint_alignment.down.sql
 -- =============================================================================
 

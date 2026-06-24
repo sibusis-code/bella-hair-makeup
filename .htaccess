@@ -19,9 +19,8 @@ ErrorDocument 404 /404.php
     RewriteRule (^|/)node_modules - [F,L,NC]
     RewriteRule (^|/)vendor/composer - [F,L,NC]
 
-    # Block the db/ folder entirely (PII JSON backups + SQL migrations) and internal docs.
+    # Block the db/ folder entirely (SQL migrations / sample JSON).
     RewriteRule (^|/)db/ - [F,L,NC]
-    RewriteRule (^|/)docs/ - [F,L,NC]
     # Block the runtime marker directory (internal state).
     RewriteRule (^|/)\.runtime - [F,L,NC]
 </IfModule>

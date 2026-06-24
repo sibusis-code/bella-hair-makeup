@@ -616,7 +616,7 @@ function priceLengthLabel(string $lengthKey): string
 }
 
 /**
- * The owner's real price list (pricing.md), transcribed as a matrix keyed by
+ * Demo price list, modelled as a matrix keyed by
  * service → subtype → [ {length_key, length_label, price} ].
  *
  * This is the single source of truth used when the DB price table
@@ -1773,7 +1773,7 @@ function getServiceCapacity(string $serviceKey): int
  * =========================================================================
  * AVAILABILITY ENGINE (Phase 1) — single source of truth for "what's free?"
  * Used by availability.php (calendar), booking.php (pre-pay check) and
- * itn.php (final re-check). Mirrors the rules in docs/BOOKING-BLUEPRINT.md §3/§3A.
+ * itn.php (final re-check).
  * =========================================================================
  */
 
