@@ -17,3 +17,7 @@ vendor/
 # OS / editor noise
 .DS_Store
 Thumbs.db
+
+# Saved-page / browser artifacts
+*.vercel.app-*.html
+*.crdownload
