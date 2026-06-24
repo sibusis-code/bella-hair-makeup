@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>Page Not Found — Bella Hair | Makeup</title>
-  <link rel="icon" href="/images/logo.jpeg" type="image/jpeg" />
+  <link rel="icon" href="/images/logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -24,7 +24,7 @@
   <header class="site-header" id="header">
     <nav class="nav-container">
       <a href="/index.php" class="nav-logo">
-        <div class="nav-logo-img"><img src="/images/logo.jpeg" alt="Bella Hair Makeup logo" /></div>
+        <div class="nav-logo-img"><img src="/images/logo.svg" alt="Bella Hair Makeup logo" /></div>
         <div><span class="logo-brand">Bella</span><span class="logo-sub">Hair | Make up</span></div>
       </a>
       <ul class="nav-links">

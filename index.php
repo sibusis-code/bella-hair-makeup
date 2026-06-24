@@ -30,12 +30,12 @@ $hoursCopperleaf = htmlspecialchars($businessInfo['hours_copperleaf'] ?? 'Mon-We
     content="Bella Hair & Makeup — Luxury hair and makeup studio in Midrand & Copperleaf, Gauteng. Book your appointment online." />
   <title>Bella Hair | Makeup — Midrand & Copperleaf</title>
   <link rel="canonical" href="https://bellahairandmakeup.co.za/index.php" />
-  <link rel="icon" href="images/logo.jpeg" type="image/jpeg" />
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="Bella Hair | Makeup — Midrand &amp; Copperleaf" />
   <meta property="og:description" content="Luxury hair and makeup studio in Midrand &amp; Copperleaf, Gauteng. Book your appointment online." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bellahairandmakeup.co.za/index.php" />
-  <meta property="og:image" content="https://bellahairandmakeup.co.za/images/logo.jpeg" />
+  <meta property="og:image" content="https://bellahairandmakeup.co.za/images/logo.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -50,7 +50,7 @@ $hoursCopperleaf = htmlspecialchars($businessInfo['hours_copperleaf'] ?? 'Mon-We
     "name": "Bella Hair | Makeup",
     "description": "Luxury hair and makeup studio serving Midrand & Copperleaf, Gauteng.",
     "url": "https://bellahairandmakeup.co.za/",
-    "image": "https://bellahairandmakeup.co.za/images/logo.jpeg",
+    "image": "https://bellahairandmakeup.co.za/images/logo.svg",
     "telephone": "+27712345678",
     "priceRange": "RR",
     "address": {
@@ -82,7 +82,7 @@ $hoursCopperleaf = htmlspecialchars($businessInfo['hours_copperleaf'] ?? 'Mon-We
   <header class="site-header" id="header">
     <nav class="nav-container">
       <a href="index.php" class="nav-logo">
-        <div class="nav-logo-img"><img src="images/logo.jpeg" alt="Bella Hair Makeup logo" /></div>
+        <div class="nav-logo-img"><img src="images/logo.svg" alt="Bella Hair Makeup logo" /></div>
         <div>
           <span class="logo-brand">Bella</span>
           <span class="logo-sub">Hair | Make up</span>
@@ -139,7 +139,7 @@ $hoursCopperleaf = htmlspecialchars($businessInfo['hours_copperleaf'] ?? 'Mon-We
   <section class="about section" id="about">
     <div class="container about-grid">
       <div class="about-image-wrap">
-        <img src="images/hair/h4.jpeg" alt="Bella Hair studio — auburn knotless braids" loading="lazy" decoding="async" class="about-img" />
+        <img src="images/hair/h4.jpeg" alt="Bella Hair &amp; Makeup — luxury hair styling" loading="lazy" decoding="async" class="about-img" />
         <!-- <div class="about-badge">10.1K+ Clients Served</div> -->
       </div>
       <div class="about-text">
@@ -167,13 +167,13 @@ $hoursCopperleaf = htmlspecialchars($businessInfo['hours_copperleaf'] ?? 'Mon-We
   <section class="gallery-section">
     <div class="gallery-grid">
       <div class="gallery-item">
-        <img src="images/hair/h4.jpeg" alt="Auburn knotless braids" loading="lazy" decoding="async" class="gallery-img"
+        <img src="images/hair/h4.jpeg" alt="Sleek styled hair" loading="lazy" decoding="async" class="gallery-img"
           style="object-position: center 30%;" />
         <div class="gallery-item-overlay"></div>
         <!-- <span class="gallery-item-label">Knotless Braids</span> -->
       </div>
       <div class="gallery-item">
-        <img src="images/hair/h9.jpeg" alt="Goddess locs ombré" loading="lazy" decoding="async" class="gallery-img"
+        <img src="images/hair/h9.jpeg" alt="Bouncy curls &amp; styling" loading="lazy" decoding="async" class="gallery-img"
           style="object-position: center 15%;" />
         <div class="gallery-item-overlay"></div>
         <!-- <span class="gallery-item-label">Goddess Locs</span> -->
@@ -185,19 +185,19 @@ $hoursCopperleaf = htmlspecialchars($businessInfo['hours_copperleaf'] ?? 'Mon-We
         <!-- <span class="gallery-item-label">Glam Artistry</span> -->
       </div>
       <div class="gallery-item">
-        <img src="images/hair/h3.jpeg" alt="Senegalese twists" loading="lazy" decoding="async" class="gallery-img"
+        <img src="images/hair/h3.jpeg" alt="Salon wash &amp; treatment" loading="lazy" decoding="async" class="gallery-img"
           style="object-position: center 15%;" />
         <div class="gallery-item-overlay"></div>
         <!-- <span class="gallery-item-label">Senegalese Twists</span> -->
       </div>
       <div class="gallery-item">
-        <img src="images/make-up/m4.jpeg" alt="Editorial makeup" loading="lazy" decoding="async" class="gallery-img"
+        <img src="images/make-up/m4.jpeg" alt="Manicure &amp; nails" loading="lazy" decoding="async" class="gallery-img"
           style="object-position: center 20%;" />
         <div class="gallery-item-overlay"></div>
         <!-- <span class="gallery-item-label">Editorial Glam</span> -->
       </div>
       <div class="gallery-item">
-        <img src="images/make-up/m5.jpeg" alt="Cornrow updo" loading="lazy" decoding="async" class="gallery-img" style="object-position: center 25%;" />
+        <img src="images/make-up/m5.jpeg" alt="Nail artistry" loading="lazy" decoding="async" class="gallery-img" style="object-position: center 25%;" />
         <div class="gallery-item-overlay"></div>
         <!-- <span class="gallery-item-label">Cornrow Updo</span> -->
       </div>

@@ -33,7 +33,7 @@ $addressCopperleaf = htmlspecialchars($businessInfo['address_copperleaf'] ?? 'Co
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
   <link rel="canonical" href="https://bellahairandmakeup.co.za/about.php" />
-  <link rel="icon" href="images/logo.jpeg" type="image/jpeg" />
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/style.css" />
   <?php echo ga4Snippet(); ?>
 </head>
@@ -44,7 +44,7 @@ $addressCopperleaf = htmlspecialchars($businessInfo['address_copperleaf'] ?? 'Co
   <header class="site-header scrolled" id="header">
     <nav class="nav-container">
       <a href="index.php" class="nav-logo">
-        <div class="nav-logo-img"><img src="images/logo.jpeg" alt="Bella Hair Makeup logo" /></div>
+        <div class="nav-logo-img"><img src="images/logo.svg" alt="Bella Hair Makeup logo" /></div>
         <div>
           <span class="logo-brand">Bella</span>
           <span class="logo-sub">Hair | Make up</span>

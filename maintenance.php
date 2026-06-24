@@ -14,7 +14,7 @@ if (!headers_sent()) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>We'll be right back | Bella Hair &amp; Makeup</title>
-  <link rel="icon" href="/images/logo.jpeg" type="image/jpeg" />
+  <link rel="icon" href="/images/logo.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -46,7 +46,7 @@ if (!headers_sent()) {
 </head>
 <body>
   <div class="m-wrap">
-    <img src="/images/logo.jpeg" alt="Bella Hair &amp; Makeup" class="m-logo"
+    <img src="/images/logo.svg" alt="Bella Hair &amp; Makeup" class="m-logo"
          onerror="this.style.display='none'" />
     <p class="m-eyebrow">Bella Hair &amp; Makeup</p>
     <h1>We're getting <em>glam-ready</em></h1>

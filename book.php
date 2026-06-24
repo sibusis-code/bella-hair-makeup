@@ -81,12 +81,12 @@ if ($mysqli instanceof mysqli) {
   <title>Book an Appointment | Bella Hair &amp; Makeup</title>
   <meta name="description" content="Book your hair or makeup appointment at Bella Hair &amp; Makeup — Midrand, Copperleaf &amp; mobile. See real open times and secure your slot with a 50% deposit." />
   <link rel="canonical" href="https://bellahairandmakeup.co.za/book.php" />
-  <link rel="icon" href="images/logo.jpeg" type="image/jpeg" />
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml" />
   <meta property="og:title" content="Book an Appointment | Bella Hair &amp; Makeup" />
   <meta property="og:description" content="Pick your service, see real open times, and secure your slot online." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://bellahairandmakeup.co.za/book.php" />
-  <meta property="og:image" content="https://bellahairandmakeup.co.za/images/logo.jpeg" />
+  <meta property="og:image" content="https://bellahairandmakeup.co.za/images/logo.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -175,7 +175,7 @@ if ($mysqli instanceof mysqli) {
   <header class="site-header" id="header">
     <nav class="nav-container">
       <a href="index.php" class="nav-logo">
-        <div class="nav-logo-img"><img src="images/logo.jpeg" alt="Bella Hair Makeup logo" /></div>
+        <div class="nav-logo-img"><img src="images/logo.svg" alt="Bella Hair Makeup logo" /></div>
         <div>
           <span class="logo-brand">Bella</span>
           <span class="logo-sub">Hair | Make up</span>

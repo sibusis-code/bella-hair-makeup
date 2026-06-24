@@ -251,7 +251,7 @@ function renderDemoBookingConfirmation(array $formData, array $servicesConfig, a
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>Booking Request Ready — Bella Hair &amp; Makeup</title>
-  <link rel="icon" href="images/logo.jpeg" type="image/jpeg" />
+  <link rel="icon" href="images/logo.svg" type="image/svg+xml" />
   <style>
     :root { --gold:#C9A96E; --ink:#1a1a1a; --paper:#faf7f2; }
     * { box-sizing: border-box; }
@@ -289,7 +289,7 @@ function renderDemoBookingConfirmation(array $formData, array $servicesConfig, a
 <body>
   <div class="wrap">
     <div class="card">
-      <img class="logo" src="images/logo.jpeg" alt="Bella Hair &amp; Makeup" />
+      <img class="logo" src="images/logo.svg" alt="Bella Hair &amp; Makeup" />
       <div class="tick">&#10003;</div>
       <h1>Your booking request is ready!</h1>
       <p class="sub">Thanks, <?php echo $esc($formData['firstName']); ?> — tap the button below to send it to us on WhatsApp and we’ll confirm your slot.</p>
